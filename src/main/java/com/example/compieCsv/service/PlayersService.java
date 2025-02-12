@@ -3,6 +3,10 @@ package com.example.compieCsv.service;
 import com.example.compieCsv.entity.Players;
 import com.example.compieCsv.exception.PlayerNotFoundException;
 import com.example.compieCsv.repository.PlayersRepository;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.web.client.RestTemplate;
@@ -54,13 +60,18 @@ public class PlayersService {
         }
     }
 
-    public void updatePlayerInfo(String playerId) {
+    public String getPlayersInfo(String playerId) {
         Optional<Players> playerOpt=playersRepository.findById(Integer.valueOf(playerId));
         if(!playerOpt.isPresent()){
             throw new PlayerNotFoundException("player","player",playerId);
         }
         ResponseEntity<String> response = callBalldontlie(playerId);
-        System.out.println(response);
+        JsonObject jsonObject = JsonParser.parseString(String.valueOf(response.getBody()))
+                .getAsJsonObject();
+        JsonObject jsonObjectData = JsonParser.parseString(String.valueOf(jsonObject.get("data")))
+                .getAsJsonObject();
+        System.out.println(jsonObjectData);
+        return jsonObjectData.toString();
     }
 
     private ResponseEntity<String> callBalldontlie(String playerId) {
@@ -84,5 +95,14 @@ public class PlayersService {
                 playerId
         );
         return response;
+    }
+
+    public void getPlayersCsv() {
+        List<Players> playersList=new ArrayList<Players>();
+        List<String> playersInfo=new ArrayList<String>();
+        playersList = playersRepository.findAll();
+        for (int i = 0; i < playersList.size(); i++) {
+            playersInfo.add(getPlayersInfo(String.valueOf(playersList.get(i).getId())));
+        }
     }
 }

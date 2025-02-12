@@ -29,12 +29,15 @@ public class Players {
     )
     private String nickname;
 
+    private String first_name;
+
     public Players() {
     }
 
-    public Players(int id, String nickname) {
+    public Players(int id, String nickname,String first_name) {
         this.id = id;
         this.nickname = nickname;
+        this.first_name = first_name;
     }
 
     public int getId() {
@@ -51,6 +54,14 @@ public class Players {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getFirst_name() {
+        return first_name;
+    }
+
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
     }
 
     @Override
