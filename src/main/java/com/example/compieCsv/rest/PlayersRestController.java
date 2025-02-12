@@ -1,7 +1,11 @@
 package com.example.compieCsv.rest;
 
+import com.example.compieCsv.constants.PlayersConstants;
+import com.example.compieCsv.dto.ResponseDto;
 import com.example.compieCsv.service.PlayersService;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +43,19 @@ public class PlayersRestController {
             return ResponseEntity.status(500).body("Error loading CSV file from resources");
         }
     }
+
+    @PutMapping("/updatePlayerInfo")
+    public ResponseEntity<ResponseDto> updateBlackListCard(@RequestParam String playerId) {
+        //blackListService.updateByCreditCardNumber(creditCardNumber,newCreditCardNumber);
+        playersService.updatePlayerInfo(playerId);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new ResponseDto(PlayersConstants.STATUS_200,PlayersConstants.MESSAGE_200));
+    }
+
+
+
+
 
 
 }
