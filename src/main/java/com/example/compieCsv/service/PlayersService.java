@@ -87,17 +87,12 @@ public class PlayersService {
     }
 
     private ResponseEntity<String> callBalldontlie(String playerId) {
-        // request url
         String url = "https://api.balldontlie.io/v1/players/{id}";
-        // create an instance of RestTemplate
         RestTemplate restTemplate = new RestTemplate();
-        // create headers
         HttpHeaders headers = new HttpHeaders();
-        // set `Content-Type` and `Accept` headers
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.set("Authorization", "e23d8783-157c-4380-9c31-a30e7f56c8a6");
-        // build the request
         HttpEntity request = new HttpEntity(headers);
         ResponseEntity<String> response = restTemplate.exchange(
                 url,
