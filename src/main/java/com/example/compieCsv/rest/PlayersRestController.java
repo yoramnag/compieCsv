@@ -48,11 +48,18 @@ public class PlayersRestController {
 
 //    @Scheduled(cron = "0 0/15 * * * *")
     @GetMapping("/exportToCSV")
-    public ResponseEntity<ResponseDto> exportToCSV(){
-        playersService.getPlayersCsv();
+    public ResponseEntity<ResponseDto> exportToCSV() {
+        playersService.updatePlayerInfoFromBalldontlie();
+        List<Players> playersList = playersService.findAll();
+        String filePath = "players.csv";
+        try {
+            playersService.exportPlayersToCSV(playersList,filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseDto(PlayersConstants.STATUS_201,PlayersConstants.MESSAGE_201));
+                .body(new ResponseDto(PlayersConstants.STATUS_201,PlayersConstants.CSV_MESSAGE_201));
     }
 
     @GetMapping("/getAllPlayers")

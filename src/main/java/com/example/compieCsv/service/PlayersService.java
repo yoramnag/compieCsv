@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.opencsv.CSVWriter;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -110,7 +112,7 @@ public class PlayersService {
         return response;
     }
 
-    public void getPlayersCsv() {
+    public void updatePlayerInfoFromBalldontlie() {
         List<Players> playersList=new ArrayList<Players>();
         playersList = playersRepository.findAll();
         if (playersList.size() > 0){
@@ -122,5 +124,41 @@ public class PlayersService {
 
     public List<Players> findAll() {
         return playersRepository.findAll();
+    }
+
+    public void exportPlayersToCSV(List<Players> playersList, String filePath) throws IOException {
+        CSVWriter writer = new CSVWriter(new FileWriter(filePath));
+        String[] header = {"id", "nickname", "first_name", "last_name", "position", "height", "weight", "jersey_number", "college", "country", "draft_year", "draft_round", "draft_number", "team_id", "team_conference", "team_division", "team_city", "team_name", "team_full_name", "team_abbreviation"};
+        writer.writeNext(header);
+
+        for (Players player : playersList) {
+            String[] data = {
+                    String.valueOf(player.getId()),
+                    player.getNickname(),
+                    player.getFirst_name(),
+                    player.getLast_name(),
+                    player.getPosition(),
+                    player.getHeight(),
+                    player.getWeight(),
+                    player.getJersey_number(),
+                    player.getCollege(),
+                    player.getCountry(),
+                    player.getDraft_year(),
+                    player.getDraft_round(),
+                    player.getDraft_number(),
+                    String.valueOf(player.getTeam().getId()),
+                    player.getTeam().getConference(),
+                    player.getTeam().getDivision(),
+                    player.getTeam().getCity(),
+                    player.getTeam().getName(),
+                    player.getTeam().getFull_name(),
+                    player.getTeam().getAbbreviation()
+            };
+
+            // Write player data to CSV
+            writer.writeNext(data);
+        }
+
+        writer.close();
     }
 }
