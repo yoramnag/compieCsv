@@ -64,16 +64,13 @@ public class PlayersService {
         }
     }
 
-    public String getPlayersInfo(Players player) {
+    public void getPlayersInfo(Players player) {
         ResponseEntity<String> response = callBalldontlie(String.valueOf(player.getId()));
         JsonObject jsonObject = JsonParser.parseString(String.valueOf(response.getBody()))
                 .getAsJsonObject();
         JsonObject jsonObjectData = JsonParser.parseString(String.valueOf(jsonObject.get("data")))
                 .getAsJsonObject();
         mapJsonToPlayer(jsonObjectData,player);
-
-        System.out.println(jsonObjectData);
-        return jsonObjectData.toString();
     }
 
     private void mapJsonToPlayer(JsonObject jsonObjectData, Players player) {
@@ -83,7 +80,7 @@ public class PlayersService {
             player = objectMapper.readValue(jsonObjectData.toString(), Players.class);
             player.setNickname(nickname);
             playersRepository.save(player);
-            System.out.println(player);
+//            System.out.println(player);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

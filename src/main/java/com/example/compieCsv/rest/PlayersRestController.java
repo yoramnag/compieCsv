@@ -46,7 +46,7 @@ public class PlayersRestController {
         }
     }
 
-//    @Scheduled(cron = "0 0/15 * * * *")
+    @Scheduled(cron = "0 0/15 * * * *")
     @GetMapping("/exportToCSV")
     public ResponseEntity<ResponseDto> exportToCSV() {
         playersService.updatePlayerInfoFromBalldontlie();
