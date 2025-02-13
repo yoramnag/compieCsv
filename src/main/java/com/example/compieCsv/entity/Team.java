@@ -37,15 +37,10 @@ public class Team {
     @JsonProperty
     private String abbreviation;
 
-    @OneToMany(fetch = FetchType.LAZY ,mappedBy="team",
-            cascade= {CascadeType.PERSIST, CascadeType.MERGE,
-                    CascadeType.DETACH, CascadeType.REFRESH})
-    private List<Players> playersList;
-
     public Team() {
     }
 
-    public Team(int id, String conference, String division, String city, String name, String full_name, String abbreviation, List<Players> playersList) {
+    public Team(int id, String conference, String division, String city, String name, String full_name, String abbreviation) {
         this.id = id;
         this.conference = conference;
         this.division = division;
@@ -53,7 +48,6 @@ public class Team {
         this.name = name;
         this.full_name = full_name;
         this.abbreviation = abbreviation;
-        this.playersList = playersList;
     }
 
     public int getId() {
@@ -112,14 +106,6 @@ public class Team {
         this.abbreviation = abbreviation;
     }
 
-    public List<Players> getPlayersList() {
-        return playersList;
-    }
-
-    public void setPlayersList(List<Players> playersList) {
-        this.playersList = playersList;
-    }
-
     @Override
     public String toString() {
         return "Team{" +
@@ -130,7 +116,6 @@ public class Team {
                 ", name='" + name + '\'' +
                 ", full_name='" + full_name + '\'' +
                 ", abbreviation='" + abbreviation + '\'' +
-                ", playersList=" + playersList +
                 '}';
     }
 }
