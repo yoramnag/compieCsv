@@ -3,6 +3,8 @@ package com.example.compieCsv.service;
 import com.example.compieCsv.entity.Players;
 import com.example.compieCsv.exception.PlayerNotFoundException;
 import com.example.compieCsv.repository.PlayersRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -60,18 +62,29 @@ public class PlayersService {
         }
     }
 
-    public String getPlayersInfo(String playerId) {
-        Optional<Players> playerOpt=playersRepository.findById(Integer.valueOf(playerId));
-        if(!playerOpt.isPresent()){
-            throw new PlayerNotFoundException("player","player",playerId);
-        }
-        ResponseEntity<String> response = callBalldontlie(playerId);
+    public String getPlayersInfo(Players player) {
+        ResponseEntity<String> response = callBalldontlie(String.valueOf(player.getId()));
         JsonObject jsonObject = JsonParser.parseString(String.valueOf(response.getBody()))
                 .getAsJsonObject();
         JsonObject jsonObjectData = JsonParser.parseString(String.valueOf(jsonObject.get("data")))
                 .getAsJsonObject();
+        mapJsonToPlayer(jsonObjectData,player);
+
         System.out.println(jsonObjectData);
         return jsonObjectData.toString();
+    }
+
+    private void mapJsonToPlayer(JsonObject jsonObjectData, Players player) {
+        String nickname = player.getNickname();
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            player = objectMapper.readValue(jsonObjectData.toString(), Players.class);
+            player.setNickname(nickname);
+            playersRepository.save(player);
+            System.out.println(player);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private ResponseEntity<String> callBalldontlie(String playerId) {
@@ -99,10 +112,11 @@ public class PlayersService {
 
     public void getPlayersCsv() {
         List<Players> playersList=new ArrayList<Players>();
-        List<String> playersInfo=new ArrayList<String>();
         playersList = playersRepository.findAll();
-        for (int i = 0; i < playersList.size(); i++) {
-            playersInfo.add(getPlayersInfo(String.valueOf(playersList.get(i).getId())));
+        if (playersList.size() > 0){
+            for (int i = 0; i < playersList.size(); i++) {
+                getPlayersInfo(playersList.get(i));
+            }
         }
     }
 }
